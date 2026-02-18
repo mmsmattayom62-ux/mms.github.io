@@ -1,0 +1,60 @@
+<div class="countdown-smart-block" style="font-family: 'Kanit', sans-serif; background: linear-gradient(135deg, #f8382a 0%, #fa5231 100%); color: #fff; border-radius: 15px; padding: 20px; max-width: 460px; width: 100%; margin: 0 auto; box-shadow: 0 10px 30px rgba(160, 0, 0, 0.3); text-align: center; box-sizing: border-box; position: relative; overflow: hidden;">
+  <style>
+    .csb-header h3 { margin: 0 0 5px 0; font-size: 18px; font-weight: 500; line-height: 1.4; color: #fff; }
+    .csb-header p { margin: 0 0 20px 0; font-size: 18px; font-weight: 300; opacity: 0.9; color: #fff; }
+    .csb-timer-wrapper { display: flex; justify-content: center; gap: 10px; }
+    .csb-unit-box { display: flex; flex-direction: column; align-items: center; width: 25%; }
+    .csb-card-window { width: 100%; max-width: 70px; height: 70px; background-color: #fff; border-radius: 8px; color: #c62828; font-size: 32px; font-weight: 700; overflow: hidden; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    .csb-film-strip { display: flex; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .csb-digit { height: 70px; display: flex; justify-content: center; align-items: center; line-height: 1; flex-shrink: 0; }
+    .csb-label { font-size: 12px; margin-top: 8px; opacity: 0.9; font-weight: 300; color: #fff; }
+    @media (max-width: 400px) { .countdown-smart-block { padding: 15px; } .csb-header h3 { font-size: 16px; } .csb-card-window { height: 60px; font-size: 26px; } .csb-digit { height: 60px; } .csb-timer-wrapper { gap: 6px; } }
+  </style>
+
+  <div class="csb-header">
+    <h3>นับถอยหลังสู่ การประกวดแข่งขันทักษะทางวิชาการ<br>ระดับภาคเหนือ ครั้งที่ 21</h3>
+    <p>วันที่ 15 มิ.ย. - 18 มิ.ย. 2569</p>
+  </div>
+
+  <div class="csb-timer-wrapper">
+    <div class="csb-unit-box"><div class="csb-card-window"><div class="csb-film-strip" id="strip-days"><div class="csb-digit">00</div><div class="csb-digit">00</div></div></div><span class="csb-label">วัน</span></div>
+    <div class="csb-unit-box"><div class="csb-card-window"><div class="csb-film-strip" id="strip-hours"><div class="csb-digit">00</div><div class="csb-digit">00</div></div></div><span class="csb-label">ชั่วโมง</span></div>
+    <div class="csb-unit-box"><div class="csb-card-window"><div class="csb-film-strip" id="strip-minutes"><div class="csb-digit">00</div><div class="csb-digit">00</div></div></div><span class="csb-label">นาที</span></div>
+    <div class="csb-unit-box"><div class="csb-card-window"><div class="csb-film-strip" id="strip-seconds"><div class="csb-digit">00</div><div class="csb-digit">00</div></div></div><span class="csb-label">วินาที</span></div>
+  </div>
+
+  <script>
+    (function() {
+      const targetDate = new Date("June 15, 2026 00:00:00").getTime();
+      let prevValues = { d: null, h: null, m: null, s: null };
+      function updateStrip(id, newValue) {
+        const valStr = (id !== 'strip-days' && newValue < 10) ? '0' + newValue : newValue;
+        if (prevValues[id] === valStr) return;
+        const strip = document.getElementById(id);
+        if (!strip) return;
+        const digits = strip.querySelectorAll('.csb-digit');
+        if (prevValues[id] === null) { digits[0].innerText = valStr; prevValues[id] = valStr; return; }
+        digits[1].innerText = valStr;
+        const slideHeight = digits[0].offsetHeight || 70;
+        strip.style.transform = "translateY(-" + slideHeight + "px)";
+        setTimeout(function() {
+          strip.style.transition = 'none';
+          digits[0].innerText = valStr;
+          strip.style.transform = 'translateY(0)';
+          setTimeout(function() { strip.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)'; }, 50);
+        }, 600);
+        prevValues[id] = valStr;
+      }
+      const timer = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+        if (distance < 0) { clearInterval(timer); document.querySelector('.csb-timer-wrapper').innerHTML = "<div style='font-size:24px; font-weight:bold; margin-top:20px;'>เริ่มงานแข่งขันแล้ว!</div>"; return; }
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        updateStrip('strip-days', days); updateStrip('strip-hours', hours); updateStrip('strip-minutes', minutes); updateStrip('strip-seconds', seconds);
+      }, 1000);
+    })();
+  </script>
+</div>
